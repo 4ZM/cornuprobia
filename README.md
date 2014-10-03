@@ -26,5 +26,5 @@ $ python cornuprobia.py mon1 -w 1984.wl
 [*] Sending 1 probe(s): 2a:a2:3a:1e:f3:6b  e2:68:f1:7c:70:22 'held'
 [*] Sending 6 probe(s): 50:5a:ef:b3:ff:a6  d5:ca:71:24:2e:fe 'furnaces'
 [*] Sending 6 probe(s): d1:39:d1:45:03:97  48:b4:71:47:4c:60 'tribute'
-^C[*] Turning of goodness
+^C[*] Turning off goodness
 ```
