@@ -1,5 +1,6 @@
 import sys, signal
 import random
+from time import sleep
 from scapy.all import *
   
 def rand_ssid():
@@ -49,3 +50,4 @@ if __name__ == "__main__":
   # Send probes    
   while True:
     send_probereq()
+    sleep(random.uniform(0, 1))
