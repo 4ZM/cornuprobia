@@ -1,11 +1,11 @@
 import sys, signal
 import random
+import argparse
 from time import sleep
 from scapy.all import *
-  
+
 def rand_ssid(wordlist):
   return random.choice(wordlist).strip()[:32]
-
 
 def send_probereq(intf='', ssid_gen=None, dst='', src='', bssid='', count=0):
 
@@ -43,23 +43,31 @@ def sig_handler(sig, frame):
 
 if __name__ == "__main__":
 
-  print '[*] Cornuprobia - Fountain of 802.11 Probe Requests'
+  # Parse cmd line
+  parser = argparse.ArgumentParser()
+  parser.add_argument('interface',
+                      help='The network interface to use (must be in monitor mode)')
+  parser.add_argument('-w', '--wordlist',
+                      metavar='FILE',
+                      help='use word list for SSID names')
+  args = parser.parse_args()
+
+  print '[*] Cornuprobia - Fountain of 802.11 Probe Requests (%s)' % args.interface
 
   # Listen for termination requests
   signal.signal(signal.SIGINT, sig_handler)
   signal.signal(signal.SIGTERM, sig_handler)
 
-  # Parse cmd line - todo
-
   # Configure ssid generator
-  ssid_gen = None
-  wordlist = 'wordlist'
-  print '[*] SSID wordlist: %s' % wordlist
-  with open(wordlist) as f:
-    words = f.readlines()
-  ssid_gen = lambda: rand_ssid(words)
+  if args.wordlist:
+    print '[*] Loading SSID wordlist: %s' % args.wordlist
+    with open(args.wordlist) as f:
+      words = f.readlines()
+    ssid_gen = lambda: rand_ssid(words)
+  else:
+    ssid_gen = None
 
-  # Send probes    
+  # Send probes
   while True:
-    send_probereq(ssid_gen=ssid_gen)
+    send_probereq(intf=args.interface, ssid_gen=ssid_gen)
     sleep(random.uniform(0, 1))
