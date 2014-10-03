@@ -3,23 +3,25 @@ import random
 from time import sleep
 from scapy.all import *
   
-def rand_ssid():
-  return 'test' # for now
+def rand_ssid(wordlist):
+  return random.choice(wordlist).strip()[:32]
 
-def send_probereq(intf='', ssid='', dst='', src='', bssid='', count=0):
+
+def send_probereq(intf='', ssid_gen=None, dst='', src='', bssid='', count=0):
 
   # Configure defaults
-  if not ssid:  ssid  = rand_ssid()
-  if not dst:   dst   = 'ff:ff:ff:ff:ff:ff'
-  if not src:   src   = RandMAC()
+  if not ssid_gen: ssid_gen = lambda : 'w00p'
+  if not dst: dst = 'ff:ff:ff:ff:ff:ff'
+  if not src: src = RandMAC()
   if not bssid: bssid = RandMAC()
-  if not intf:  intf  = 'mon0'
+  if not intf: intf = 'mon0'
   if count < 1: count = random.randint(1,9)
 
   # Beacon interface
   conf.iface = intf
 
   # Build probe request package
+  ssid = ssid_gen()
   param = Dot11ProbeReq()
   essid = Dot11Elt(ID='SSID',info=ssid)
   rates  = Dot11Elt(ID='Rates',info='\x03\x12\x96\x18\x24\x30\x48\x60')
@@ -40,14 +42,24 @@ def sig_handler(sig, frame):
 
 
 if __name__ == "__main__":
-  signal.signal(signal.SIGINT, sig_handler)
-  signal.signal(signal.SIGTERM, sig_handler)
 
   print '[*] Cornuprobia - Fountain of 802.11 Probe Requests'
 
+  # Listen for termination requests
+  signal.signal(signal.SIGINT, sig_handler)
+  signal.signal(signal.SIGTERM, sig_handler)
+
   # Parse cmd line - todo
-  
+
+  # Configure ssid generator
+  ssid_gen = None
+  wordlist = 'wordlist'
+  print '[*] SSID wordlist: %s' % wordlist
+  with open(wordlist) as f:
+    words = f.readlines()
+  ssid_gen = lambda: rand_ssid(words)
+
   # Send probes    
   while True:
-    send_probereq()
+    send_probereq(ssid_gen=ssid_gen)
     sleep(random.uniform(0, 1))
