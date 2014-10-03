@@ -54,7 +54,7 @@ def send_probereq(intf='', ssid_gen=None, dst='', src='', bssid='', count=0):
 
 # Handle Ctrl-C to exit
 def sig_handler(sig, frame):
-  print '[*] Turning of goodness'
+  print '[*] Turning off goodness'
   sys.exit(0)
 
 
