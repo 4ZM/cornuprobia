@@ -1,5 +1,5 @@
 import sys, signal
-from random import randint
+import random
 from scapy.all import *
   
 def rand_ssid():
@@ -13,7 +13,7 @@ def send_probereq(intf='', ssid='', dst='', src='', bssid='', count=0):
   if not src:   src   = RandMAC()
   if not bssid: bssid = RandMAC()
   if not intf:  intf  = 'mon0'
-  if count < 1: count = randint(1,10)
+  if count < 1: count = random.randint(1,9)
 
   # Beacon interface
   conf.iface = intf
@@ -26,7 +26,7 @@ def send_probereq(intf='', ssid='', dst='', src='', bssid='', count=0):
   pkt = RadioTap()/Dot11(type=0, subtype=4, addr1=dst, addr2=src, addr3=bssid)/param/essid/rates/dsset
 
   # Send the packets
-  print '[*] Sending Probe: %s  %s \'%s\'' % (bssid,src,ssid)
+  print '[*] Sending %d probe(s): %s  %s \'%s\'' % (count, bssid,src,ssid)
   try:
     sendp(pkt, count=count, inter=0.1, verbose=0)
   except:
