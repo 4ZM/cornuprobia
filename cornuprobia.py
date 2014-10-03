@@ -32,7 +32,7 @@ def send_probereq(intf='', ssid_gen=None, dst='', src='', bssid='', count=0):
   if not src: src = RandMAC()
   if not bssid: bssid = RandMAC()
   if not intf: intf = 'mon0'
-  if count < 1: count = random.randint(1,9)
+  if count < 1: count = random.randint(1,5)
 
   # Beacon interface
   conf.iface = intf
@@ -87,4 +87,4 @@ if __name__ == "__main__":
   # Send probes
   while True:
     send_probereq(intf=args.interface, ssid_gen=ssid_gen)
-    sleep(random.uniform(0, 1))
+    sleep(random.uniform(0, 0.2))
