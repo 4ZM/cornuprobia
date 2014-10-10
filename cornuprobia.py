@@ -30,7 +30,7 @@ def send_probereq(intf='', ssid_gen=None, dst='', src='', bssid='', count=0):
   if not ssid_gen: ssid_gen = lambda : 'w00p'
   if not dst: dst = 'ff:ff:ff:ff:ff:ff'
   if not src: src = RandMAC()
-  if not bssid: bssid = RandMAC()
+  if not bssid: bssid = 'ff:ff:ff:ff:ff:ff'
   if not intf: intf = 'mon0'
   if count < 1: count = random.randint(1,5)
 
@@ -46,7 +46,7 @@ def send_probereq(intf='', ssid_gen=None, dst='', src='', bssid='', count=0):
   pkt = RadioTap()/Dot11(type=0, subtype=4, addr1=dst, addr2=src, addr3=bssid)/param/essid/rates/dsset
 
   # Send the packets
-  print '[*] Sending %d probe(s): %s  %s \'%s\'' % (count, bssid,src,ssid)
+  print '[*] Sending %d probe(s): %s \'%s\'' % (count, src,ssid)
   try:
     sendp(pkt, count=count, inter=0.1, verbose=0)
   except:
