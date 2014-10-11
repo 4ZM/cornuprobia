@@ -57,9 +57,7 @@ def sig_handler(sig, frame):
   print '[*] Turning off goodness'
   sys.exit(0)
 
-
-if __name__ == "__main__":
-
+def parse_args():
   # Parse cmd line
   parser = argparse.ArgumentParser()
   parser.add_argument('interface',
@@ -67,24 +65,33 @@ if __name__ == "__main__":
   parser.add_argument('-w', '--wordlist',
                       metavar='FILE',
                       help='use word list for SSID names')
-  args = parser.parse_args()
+  return parser.parse_args()
 
+def get_ssid_gen(args):
+    if args.wordlist:
+      print '[*] Loading SSID wordlist: %s' % args.wordlist
+      with open(args.wordlist) as f:
+        words = f.readlines()
+      return lambda: rand_ssid(words)
+    else:
+      return None
+
+def cornuprobia(args):
   print '[*] Cornuprobia - Fountain of 802.11 Probe Requests (%s)' % args.interface
 
   # Listen for termination requests
   signal.signal(signal.SIGINT, sig_handler)
   signal.signal(signal.SIGTERM, sig_handler)
 
-  # Configure ssid generator
-  if args.wordlist:
-    print '[*] Loading SSID wordlist: %s' % args.wordlist
-    with open(args.wordlist) as f:
-      words = f.readlines()
-    ssid_gen = lambda: rand_ssid(words)
-  else:
-    ssid_gen = None
-
   # Send probes
+  ssid_gen = get_ssid_gen(args)
   while True:
     send_probereq(intf=args.interface, ssid_gen=ssid_gen)
     sleep(random.uniform(0, 0.2))
+
+def main():
+  args = parse_args()
+  cornuprobia(args)
+
+if __name__ == "__main__":
+  main()
