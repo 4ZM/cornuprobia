@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import sys, signal
 import random
 import argparse
+import daemon
 from time import sleep
 from scapy.all import *
 
@@ -62,6 +63,9 @@ def parse_args():
   parser = argparse.ArgumentParser()
   parser.add_argument('interface',
                       help='The network interface to use (must be in monitor mode)')
+  parser.add_argument('-d', '--daemonize',
+                      help='detach and run in the background',
+                      action='store_true')
   parser.add_argument('-w', '--wordlist',
                       metavar='FILE',
                       help='use word list for SSID names')
@@ -91,7 +95,12 @@ def cornuprobia(args):
 
 def main():
   args = parse_args()
-  cornuprobia(args)
+
+  if args.daemonize:
+    with daemon.DaemonContext():
+      cornuprobia(args)
+  else:
+    cornuprobia(args)
 
 if __name__ == "__main__":
   main()
