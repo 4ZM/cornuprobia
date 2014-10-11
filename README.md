@@ -28,3 +28,42 @@ $ python cornuprobia.py -w 1984.wl mon1
 [*] Sending 6 probe(s): 48:b4:71:47:4c:60 'tribute'
 ^C[*] Turning off goodness
 ```
+
+
+Installing on a Raspberry Pi
+============================
+
+* Install Raspian (http://raspbian.org) - Confirmed with: 2014-09-09
+  - update and configure the base system.
+  - Install drivers for your wifi-chard if it doesn't work out of the box.
+
+* Install packages: python-scapy, python-daemon
+
+* Download Cornuprobia
+  $ git clone https://github.com/4ZM/cornuprobia.git
+
+* Test Cornuprobia:
+  $ cd cornuprobia
+  $ sudo ./scripts/mkif.sh
+  $ sudo python cornuprobia.py -w 1984.wl mon0
+
+  -- Watch it run.
+  -- You can see the probe requests using airodump-ng on another computer.
+
+  $ sudo ./scripts/rmif.sh
+
+* Install the script to start Cornuprobia at boot
+  $ sudo cp cornuprobia/scripts/cornuprobia-service.sh /etc/init.d/
+  $ sudo chmod +x /etc/init.d/cornuprobia-service.sh
+  $ sudo update-rc.d cornuprobia-service.sh defaults
+
+* Test the service
+  $ sudo /etc/init.d/cornuprobia-service.sh start
+
+  -- Make sure it runs
+
+  $ sudo /etc/init.d/cornuprobia-service.sh stop
+
+  -- Make sure it stopped
+
+* Reboot and verify that the script starts automatically
